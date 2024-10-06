@@ -14,7 +14,7 @@ jobs:
       contents: read
 
     env:
-      IMAGE_NAME: article_scraping
+      IMAGE_NAME: article-scraping
       IMAGE_TAG: v1.0
 
     steps:
