@@ -39,7 +39,7 @@ jobs:
       - name: Check Docker version
         run: docker --version
 
-      - name: Set up GCP Docker credential helpergi
+      - name: Set up GCP Docker credential helper
         run: |
           gcloud auth configure-docker --project=${{ secrets.GCP_PROJECT_ID }}
 
@@ -50,7 +50,7 @@ jobs:
       - name: Build Docker Image
         run: |
           echo "Building Docker image"
-          docker build -t asia-northeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker build -t asia-northeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: Push Docker Image to Artifact Registry
         run: |
