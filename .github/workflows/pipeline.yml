@@ -1,0 +1,60 @@
+name: Docker Container配布
+on:
+  # mainへのPush時、または手動でワークフローを実行する
+  push:
+    branches:
+      - feature/test
+  workflow_dispatch:
+
+jobs:
+  job_id:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      IMAGE_NAME: article_scraping
+      IMAGE_TAG: v1:0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # GitHub Action Authentication
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - run: echo "🔒 google-github-actions/auth@v2 was successful"
+
+      - name: Check working directory
+        run: |
+          pwd
+          ls -la
+
+      - name: Check Docker version
+        run: docker --version
+
+      - name: Set up GCP Docker credential helpergi
+        run: |
+          gcloud auth configure-docker --project=${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure docker for artifact registry
+        run: |
+          gcloud auth configure-docker asia-docker.pkg.dev
+
+      - name: Build Docker Image
+        run: |
+          echo "Building Docker image"
+          docker build -t asia-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+
+      - name: Push Docker Image to Artifact Registry
+        run: |
+          echo "Pushing Docker image to Artifact Registry"
+          docker push asia-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      - run: echo "🐋 GCP Cloud container upload successful"
+
+
