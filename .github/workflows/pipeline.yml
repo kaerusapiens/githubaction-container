@@ -14,6 +14,7 @@ jobs:
       contents: read
 
     env:
+      ARTIFACT_REPOSITORY : article-scraping
       IMAGE_NAME: article-scraping
       IMAGE_TAG: v1.0
 
@@ -54,7 +55,7 @@ jobs:
       - name: Push Docker Image to Artifact Registry
         run: |
           echo "Pushing Docker image to Artifact Registry"
-          docker push asia-northeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push asia-northeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
       - run: echo "🐋 GCP Cloud container upload successful"
 
 
